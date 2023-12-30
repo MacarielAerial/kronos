@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "gaia"
+name = "kronos"
 version = "0.0.0"
-description = "Template repository for a python project"
+description = "Downloads arbitrary Google Sheet data and converts it into a database"
 authors = ["Yifei Yu"]
 readme = "README.md"
 packages = [
-    { include = "gaia", from = "src" }
+    { include = "kronos", from = "src" }
 ]
 include = [
-    { path = "src/gaia/conf_default", format = "sdist" },
+    { path = "src/kronos/conf_default", format = "sdist" },
     { path = "notebooks", format = "sdist" }
 ]
 
@@ -16,6 +16,12 @@ include = [
 python = "~3.10"
 orjson = "^3.9.10"
 dacite = "^1.8.1"
+gspread = "^5.12.3"
+python-dotenv = "^1.0.0"
+pandas = "^2.1.4"
+networkx = "^3.2.1"
+spacy = "^3.7.2"
+joblib = "^1.3.2"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
@@ -28,6 +34,14 @@ yamllint = "^1.33.0"
 semgrep = "^1.54.2"
 ipykernel = "^6.27.1"
 nbformat = "^5.9.2"
+pandas-stubs = "^2.1.4.231227"
+types-networkx = "^3.1.0.20231220"
+types-tqdm = "^4.66.0.5"
+ariadne = {path = "local_dependencies/ariadne-0.0.1.tar.gz"}
+
+
+[tool.poetry.group.vis.dependencies]
+plotly = "^5.18.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -70,7 +84,11 @@ warn_unused_ignores = true
 show_error_codes = true
 
 [[tool.mypy.overrides]]
-module = []
+module = [
+    "plotly.*",
+    "gspread,*",
+    "joblib.*"
+]
 ignore_missing_imports = true
 warn_return_any = false
 

@@ -1,0 +1,26 @@
+name: ci_general
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - '*'
+
+jobs:
+
+  test:
+    container:
+      image: python:3.10
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint and Test code
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH="$HOME/.local/bin:$PATH"
+          poetry --version
+          poetry install
+          poetry run ./lint.sh
+          poetry run ./test.sh

@@ -18,11 +18,19 @@ class TestDataPaths:
 
     # Test input data paths
 
+    @property
+    def path_timetable(self) -> Path:
+        return self.path_dir_data / "mock_timetable.csv"
+
     # Test output data paths
 
     @property
     def path_dir_output(self) -> Path:
         return self.path_dir_data / "output"
+
+    @property
+    def path_output_timetable(self) -> Path:
+        return self.path_dir_output / "mock_timetable.csv"
 
 
 @fixture

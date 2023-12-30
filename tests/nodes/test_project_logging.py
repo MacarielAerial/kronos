@@ -1,6 +1,6 @@
 import logging
 
-from gaia.nodes.project_logging import default_logging
+from kronos.nodes.project_logging import default_logging
 
 logger = logging.getLogger(__name__)
 
