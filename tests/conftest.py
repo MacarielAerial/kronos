@@ -1,6 +1,7 @@
 import logging
 import shutil
 from pathlib import Path
+from typing import List
 
 from pytest import ExitCode, Session, fixture
 
@@ -28,6 +29,24 @@ class TestDataPaths:
 @fixture
 def test_data_paths() -> TestDataPaths:
     return TestDataPaths()
+
+
+@fixture
+def mock_sheet_values() -> List[List[str]]:
+    return [
+        [
+            "dwhwd + ??",
+            "",
+            "",
+            "",
+            "DWADW",
+            "OJWODJA",
+            "",
+            "",
+            "312fd Pdsad - Fsj sdkwj wasda",
+        ],
+        ["", "", "", "", "1900", "", "DS/GWF", "", "WWQDWDDDWD 1"],
+    ]
 
 
 def pytest_sessionstart(session: Session) -> None:
