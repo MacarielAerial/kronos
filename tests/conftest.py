@@ -25,6 +25,14 @@ class TestDataPaths:
     def path_dir_output(self) -> Path:
         return self.path_dir_data / "output"
 
+    @property
+    def path_saved_timetable_df(self) -> Path:
+        return self.path_dir_output / "saved_timetable_df.json"
+
+    @property
+    def path_integration_saved_timetable_df(self) -> Path:
+        return self.path_dir_output / "integration_saved_timetable_df.json"
+
 
 @fixture
 def test_data_paths() -> TestDataPaths:

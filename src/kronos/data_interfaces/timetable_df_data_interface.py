@@ -83,7 +83,7 @@ class TimeTableDFDataInterface:
         # Resolve load version path
         if self.version is None:
             filepaths = sorted(list(self.filepath.iterdir()), reverse=True)
-            filepath = filepaths[0]
+            filepath = filepaths[0] / self.filepath.name
 
         with open(filepath, "r") as f:
             # Empty strings should be interpreted as empty strings

@@ -1,13 +1,18 @@
 from pathlib import Path
+from typing import Optional
 
 from kronos.data_interfaces.timetable_df_data_interface import TimeTableDFDataInterface
 
 
 def download_df_timetable(
-    path_service_account_json: Path, path_timetable_df: Path
+    path_service_account_json: Path,
+    path_timetable_df: Path,
+    version: Optional[str] = None,
 ) -> None:
     # Task Processing
-    timetable_df_data_interface = TimeTableDFDataInterface(filepath=path_timetable_df)
+    timetable_df_data_interface = TimeTableDFDataInterface(
+        filepath=path_timetable_df, version=version
+    )
     sheet_values = timetable_df_data_interface.download(
         path_service_account_json=path_service_account_json
     )
