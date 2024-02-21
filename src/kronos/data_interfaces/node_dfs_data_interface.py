@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from collections import namedtuple
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -19,11 +20,27 @@ class NodeAttrKey(str, Enum):
     nid = "nid"
     ntype = "ntype"
     text = "text"
+    coord = "coord"
 
 
 class NodeType(str, Enum):
     sheet_cell = "SheetCell"
     token = "Token"
+
+
+SheetCellTuple = namedtuple(
+    "SheetCellTuple",
+    [
+        "nid",
+        "ntype",
+        "text",
+        "coord",
+    ],
+)
+TokenTuple = namedtuple(
+    "TokenTuple",
+    ["nid", "ntype", "text"],
+)
 
 
 @dataclass

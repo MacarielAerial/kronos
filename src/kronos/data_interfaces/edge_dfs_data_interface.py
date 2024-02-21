@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import logging
+from collections import namedtuple
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Union
 
 import dacite
 import orjson
@@ -28,6 +29,27 @@ class EdgeType(str, Enum):
     right = "Right"
 
     token_to_cell = "TokenToCell"
+
+
+UpTuple = namedtuple(
+    "UpTuple",
+    ["eid", "etype", "distance"],
+)
+DownTuple = namedtuple(
+    "DownTuple",
+    ["eid", "etype", "distance"],
+)
+LeftTuple = namedtuple(
+    "LeftTuple",
+    ["eid", "etype", "distance"],
+)
+RightTuple = namedtuple(
+    "RightTuple",
+    ["eid", "etype", "distance"],
+)
+TokenToCellTuple = namedtuple("TokenToCellTuple", ["eid", "etype"])
+
+TraversalTuple = Union[UpTuple, DownTuple, LeftTuple, RightTuple]
 
 
 @dataclass
