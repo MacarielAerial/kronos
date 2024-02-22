@@ -12,6 +12,13 @@ poetry run python -m kronos.pipelines.download_timetable_df -psj credentials/kro
 ```
 
 2. Parse timetable dataframe into graph elements of a layout graph
+
 ```sh
-poetry run python -m kronos.pipelines.df_to_layout_graph -ptd data/01_raw/timetable_df.csv/ -pnd data/02_intermeidate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json
+poetry run python -m kronos.pipelines.df_to_layout_graph -ptd data/01_raw/timetable_df.csv/ -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json
+```
+
+3. Constructs a layout graph from parsed graph elements
+
+```sh
+poetry run python -m kronos.pipelines.assemble_kg -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json -png data/02_intermediate/layout_nx_g.json
 ```

@@ -117,7 +117,7 @@ def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
         # Collect one edge per direction per node to the first non null cell
         for direction in Direction:
             traversal_tuple_type = direction_to_ttuple_type[direction]
-            tra_dst_tuple = find_first_non_null(df, r_src, c_src, Direction.up)
+            tra_dst_tuple = find_first_non_null(df, r_src, c_src, direction)
             if tra_dst_tuple is not None:
                 r_dst, c_dst, dis = tra_dst_tuple
                 dst_nid = indexed_df_sheet_cell.loc[
