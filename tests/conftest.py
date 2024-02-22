@@ -39,6 +39,10 @@ class TestDataPaths:
     def path_mock_edge_dfs(self) -> Path:
         return self.path_dir_data / "mock_edge_dfs.json"
 
+    @property
+    def path_mock_timetable_df(self) -> Path:
+        return self.path_dir_data / "mock_timetable_df.csv"
+
     # Test input data paths
 
     # Test output data paths
@@ -62,6 +66,14 @@ class TestDataPaths:
     @property
     def path_saved_edge_dfs(self) -> Path:
         return self.path_dir_output / "saved_edge_dfs.json"
+
+    @property
+    def path_integration_node_dfs(self) -> Path:
+        return self.path_dir_output / "integration_node_dfs.json"
+
+    @property
+    def path_integration_edge_dfs(self) -> Path:
+        return self.path_dir_output / "integration_edge_dfs.json"
 
 
 @fixture

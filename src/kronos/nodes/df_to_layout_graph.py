@@ -129,20 +129,20 @@ def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
                 traversals.append(traversal_tuple)
     df_traversal = DataFrame(traversals)
 
-    logger.info(f"Traversal edge dataframe has shape {df_traversal.values}")
+    logger.info(f"Traversal edge dataframe has shape {df_traversal.shape}")
 
-    # Initialise edge dataframes as a single object
-    edge_dfs = EdgeDFs(members=[])
+    # Initialise traversal edge dataframes as a single object
+    traversal_edge_dfs = EdgeDFs(members=[])
 
     # Populate edge dataframes with sub dataframes grouped by edge type
     for etype_val, df_by_etype in df_traversal.groupby([EdgeAttrKey.etype.value]):
         etype = EdgeType(squeeze_tuple(etype_val))
         edge_df = EdgeDF(etype=etype, df=df_by_etype)
-        edge_dfs.members.append(edge_df)
+        traversal_edge_dfs.members.append(edge_df)
         logger.info(
-            f"Factored out {etype} edge dataframe has shape " f"{df_by_etype.shape}"
+            f"Factored out {etype} edge dataframe has shape {df_by_etype.shape}"
         )
 
-    edge_dfs.validate()
+    traversal_edge_dfs.validate()
 
-    return sheet_cell_node_df, edge_dfs
+    return sheet_cell_node_df, traversal_edge_dfs
