@@ -13,8 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install git lfs
+        run: apt-get update && apt-get install git-lfs
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Lint and Test code
         run: |
