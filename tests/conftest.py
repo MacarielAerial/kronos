@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 from typing import List
 
+from networkx import Graph
 from pandas import DataFrame
 from pytest import ExitCode, Session, fixture
 
@@ -43,6 +44,10 @@ class TestDataPaths:
     def path_mock_timetable_df(self) -> Path:
         return self.path_dir_data / "mock_timetable_df.csv"
 
+    @property
+    def path_mock_nx_g(self) -> Path:
+        return self.path_dir_data / "mock_nx_g.json"
+
     # Test input data paths
 
     # Test output data paths
@@ -75,6 +80,10 @@ class TestDataPaths:
     def path_integration_edge_dfs(self) -> Path:
         return self.path_dir_output / "integration_edge_dfs.json"
 
+    @property
+    def path_saved_nx_g(self) -> Path:
+        return self.path_dir_output / "saved_nx_g.json"
+
 
 @fixture
 def test_data_paths() -> TestDataPaths:
@@ -100,24 +109,27 @@ def mock_sheet_values() -> List[List[str]]:
 
 
 @fixture
-def mock_node_dfs() -> NodeDFs:
+def mock_node_df() -> NodeDF:
+    df_sheet_cell = DataFrame(
+        {
+            NodeAttrKey.nid.value: [0, 1],
+            NodeAttrKey.ntype.value: [NodeType.sheet_cell.value] * 2,
+        }
+    )
+    return NodeDF(ntype=NodeType.sheet_cell, df=df_sheet_cell)
+
+
+@fixture
+def mock_node_dfs(mock_node_df: NodeDF) -> NodeDFs:
     node_dfs = NodeDFs(
         members=[
-            NodeDF(
-                ntype=NodeType.sheet_cell,
-                df=DataFrame(
-                    {
-                        NodeAttrKey.nid.value: [0, 1],
-                        NodeAttrKey.ntype.value: [NodeType.sheet_cell.value] * 2,
-                    }
-                ),
-            ),
+            mock_node_df,
             NodeDF(
                 ntype=NodeType.token,
                 df=DataFrame(
                     {
-                        NodeAttrKey.nid.value: [0, 1, 2],
-                        NodeAttrKey.ntype.value: [NodeType.token.value] * 3,
+                        NodeAttrKey.nid.value: [0],
+                        NodeAttrKey.ntype.value: [NodeType.token.value],
                     }
                 ),
             ),
@@ -128,24 +140,39 @@ def mock_node_dfs() -> NodeDFs:
 
 
 @fixture
-def mock_edge_dfs() -> EdgeDFs:
+def mock_edge_df() -> EdgeDF:
+    return EdgeDF(
+        etype=EdgeType.token_to_cell,
+        df=DataFrame(
+            {
+                EdgeAttrKey.src_nid.value: [0],
+                EdgeAttrKey.dst_nid.value: [1],
+                EdgeAttrKey.src_ntype.value: [NodeType.token.value],
+                EdgeAttrKey.dst_ntype.value: [NodeType.sheet_cell.value],
+                EdgeAttrKey.etype.value: [EdgeType.token_to_cell.value],
+            }
+        ),
+    )
+
+
+@fixture
+def mock_edge_dfs(mock_edge_df: EdgeDF) -> EdgeDFs:
     edge_dfs = EdgeDFs(
         members=[
-            EdgeDF(
-                etype=EdgeType.token_to_cell,
-                df=DataFrame(
-                    {
-                        EdgeAttrKey.eid.value: [(0, 0), (0, 1)],
-                        EdgeAttrKey.etype.value: [EdgeType.token_to_cell.value] * 2,
-                    }
-                ),
-            ),
+            mock_edge_df,
             EdgeDF(
                 etype=EdgeType.up,
                 df=DataFrame(
                     {
-                        EdgeAttrKey.eid.value: [(0, 1)],
-                        EdgeAttrKey.etype.value: [EdgeType.up.value],
+                        EdgeAttrKey.src_nid.value: [0, 1],
+                        EdgeAttrKey.dst_nid.value: [1, 0],
+                        EdgeAttrKey.src_ntype.value: [NodeType.sheet_cell.value] * 2,
+                        EdgeAttrKey.dst_ntype.value: [NodeType.sheet_cell.value] * 2,
+                        EdgeAttrKey.etype.value: [
+                            EdgeType.up.value,
+                            EdgeType.down.value,
+                        ],
+                        EdgeAttrKey.distance.value: [4, 4],
                     }
                 ),
             ),
@@ -157,7 +184,17 @@ def mock_edge_dfs() -> EdgeDFs:
 
 @fixture
 def mock_json_str_df() -> str:
-    return '{"schema":{"fields":[{"name":"index","type":"integer"},{"name":"eid","type":"string"},{"name":"etype","type":"string"}],"primaryKey":["index"],"pandas_version":"1.4.0"},"data":[{"index":0,"eid":[0,0],"etype":"TokenToCell"},{"index":1,"eid":[0,1],"etype":"TokenToCell"}]}'
+    return '{"schema":{"fields":[{"name":"index","type":"integer"},{"name":"dummy","type":"string"},{"name":"etype","type":"string"}],"primaryKey":["index"],"pandas_version":"1.4.0"},"data":[{"index":0,"dummy":[0,0],"etype":"TokenToCell"},{"index":1,"dummy":[0,1],"etype":"TokenToCell"}]}'
+
+
+@fixture
+def mock_nx_g() -> Graph:
+    nx_g = Graph()
+    nx_g.add_node(0, ntype="haha")
+    nx_g.add_node(1, ntype="ohno")
+    nx_g.add_edge(0, 1, etype="lol")
+
+    return nx_g
 
 
 def pytest_sessionstart(session: Session) -> None:

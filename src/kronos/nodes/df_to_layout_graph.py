@@ -69,7 +69,7 @@ def find_first_non_null(  # noqa: C901
 def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
     sheet_cells: List[SheetCellTuple] = []
     traversals: List[TraversalTuple] = []
-    direction_to_tetype: Dict[Direction, EdgeType] = {
+    direction_to_etype: Dict[Direction, EdgeType] = {
         Direction.up: EdgeType.up,
         Direction.down: EdgeType.down,
         Direction.left: EdgeType.left,
@@ -113,6 +113,7 @@ def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
     # Assemble traversal edge edgeframe second
     for r_src, c_src in indexed_df_sheet_cell.index:
         src_nid = indexed_df_sheet_cell.loc[(r_src, c_src), NodeAttrKey.nid.value]
+        src_ntype = indexed_df_sheet_cell.loc[(r_src, c_src), NodeAttrKey.ntype.value]
         # Collect one edge per direction per node to the first non null cell
         for direction in Direction:
             traversal_tuple_type = direction_to_ttuple_type[direction]
@@ -122,19 +123,22 @@ def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
                 dst_nid = indexed_df_sheet_cell.loc[
                     (r_dst, c_dst), NodeAttrKey.nid.value
                 ]
-                tetype = direction_to_tetype[direction]
+                dst_ntype = indexed_df_sheet_cell.loc[
+                    (r_dst, c_dst), NodeAttrKey.ntype.value
+                ]
+                etype = direction_to_etype[direction].value
                 traversal_tuple = traversal_tuple_type(
-                    (src_nid, dst_nid), tetype.value, dis
+                    src_nid, dst_nid, src_ntype, etype, dst_ntype, dis
                 )
                 traversals.append(traversal_tuple)
     df_traversal = DataFrame(traversals)
 
     logger.info(f"Traversal edge dataframe has shape {df_traversal.shape}")
 
-    # Initialise traversal edge dataframes as a single object
+    # Initialise edge dataframes as a single object
     traversal_edge_dfs = EdgeDFs(members=[])
 
-    # Populate edge dataframes with sub dataframes grouped by edge type
+    # Partition traversal edge dataframe into one edge dataframe per type
     for etype_val, df_by_etype in df_traversal.groupby([EdgeAttrKey.etype.value]):
         etype = EdgeType(squeeze_tuple(etype_val))
         edge_df = EdgeDF(etype=etype, df=df_by_etype)

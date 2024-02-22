@@ -17,8 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 class EdgeAttrKey(str, Enum):
-    eid = "eid"
+    src_nid = "src_nid"
+    dst_nid = "dst_nid"
+    src_ntype = "src_ntype"
     etype = "etype"
+    dst_ntype = "dst_ntype"
     distance = "distance"
 
 
@@ -33,21 +36,23 @@ class EdgeType(str, Enum):
 
 UpTuple = namedtuple(
     "UpTuple",
-    ["eid", "etype", "distance"],
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "distance"],
 )
 DownTuple = namedtuple(
     "DownTuple",
-    ["eid", "etype", "distance"],
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "distance"],
 )
 LeftTuple = namedtuple(
     "LeftTuple",
-    ["eid", "etype", "distance"],
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "distance"],
 )
 RightTuple = namedtuple(
     "RightTuple",
-    ["eid", "etype", "distance"],
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "distance"],
 )
-TokenToCellTuple = namedtuple("TokenToCellTuple", ["eid", "etype"])
+TokenToCellTuple = namedtuple(
+    "TokenToCellTuple", ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype"]
+)
 
 TraversalTuple = Union[UpTuple, DownTuple, LeftTuple, RightTuple]
 
@@ -69,7 +74,7 @@ class EdgeDFs:
         if len(set_etype) != len(list_etype):
             raise ValueError(
                 "Edge type dataframes including the following "
-                f"edge types are not unique:\n{list_etype}"
+                f"canonical edge types are not unique:\n{list_etype}"
             )
 
     def to_dict(self) -> Dict[EdgeType, DataFrame]:

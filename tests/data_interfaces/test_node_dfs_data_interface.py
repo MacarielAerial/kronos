@@ -15,10 +15,18 @@ from tests.conftest import TestDataPaths
 def test_node_dfs_validate_unique_types_and_ids() -> None:
     # Arrange
     df1 = pd.DataFrame(
-        {NodeAttrKey.nid.value: [1, 2], NodeAttrKey.text.value: ["text1", "text2"]}
+        {
+            NodeAttrKey.nid.value: [1, 2],
+            NodeAttrKey.ntype.value: NodeType.sheet_cell.value,
+            NodeAttrKey.text.value: ["text1", "text2"],
+        }
     )
     df2 = pd.DataFrame(
-        {NodeAttrKey.nid.value: [3, 4], NodeAttrKey.text.value: ["text3", "text4"]}
+        {
+            NodeAttrKey.nid.value: [3, 4],
+            NodeAttrKey.ntype.value: NodeType.token.value,
+            NodeAttrKey.text.value: ["text3", "text4"],
+        }
     )
     node_df1 = NodeDF(ntype=NodeType.sheet_cell, df=df1)
     node_df2 = NodeDF(ntype=NodeType.token, df=df2)
@@ -34,7 +42,11 @@ def test_node_dfs_validate_unique_types_and_ids() -> None:
 def test_node_dfs_validate_non_unique_ids() -> None:
     # Arrange
     df = pd.DataFrame(
-        {NodeAttrKey.nid.value: [1, 1], NodeAttrKey.text.value: ["text1", "text2"]}
+        {
+            NodeAttrKey.nid.value: [1, 1],
+            NodeAttrKey.ntype.value: NodeType.sheet_cell.value,
+            NodeAttrKey.text.value: ["text1", "text2"],
+        }
     )
     node_df = NodeDF(ntype=NodeType.sheet_cell, df=df)
     node_dfs = NodeDFs(members=[node_df])

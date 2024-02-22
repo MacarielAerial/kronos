@@ -5,7 +5,7 @@ from collections import namedtuple
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Tuple
 
 import dacite
 import orjson
@@ -63,14 +63,16 @@ class NodeDFs:
                 f"node types are not unique:\n{list_ntype}"
             )
 
-        list_nid: List[int] = []
-        set_nid: Set[int] = set()
+        list_nodes: List[Tuple[str, int]] = []
+        set_nodes: Set[Tuple[str, int]] = set()
         for node_df in self.members:
             df = node_df.df
-            list_nid.extend(df[NodeAttrKey.nid.value].tolist())
-            set_nid = set_nid | set(df[NodeAttrKey.nid.value])
+            list_nodes.extend(df[NodeAttrKey.nid.value].tolist())
+            set_nodes = set_nodes | set(
+                zip(df[NodeAttrKey.ntype.value], df[NodeAttrKey.nid.value])
+            )
 
-        if len(set_nid) != len(list_nid):
+        if len(set_nodes) != len(list_nodes):
             raise ValueError(
                 "Node ids are not unique within dataframes in "
                 f"{self.__class__.__name__} object"
