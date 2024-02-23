@@ -13,14 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install git lfs
+        run: apt-get update && apt-get install git-lfs
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Lint and Test code
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           export PATH="$HOME/.local/bin:$PATH"
           poetry --version
-          poetry install
+          poetry install --without vis
           poetry run ./lint.sh
           poetry run ./test.sh

@@ -11,7 +11,7 @@ from tests.conftest import TestDataPaths
 def test_preprocess() -> None:
     # Arrange
     input_data = [["1", "2", "3"], ["4", "5", "6"]]
-    expected_df = pd.DataFrame({0: ["1", "2", "3"], 1: ["4", "5", "6"]})
+    expected_df = pd.DataFrame({0: ["1", "4"], 1: ["2", "5"], 2: ["3", "6"]})
 
     # Act
     processed_df = TimeTableDFDataInterface.preprocess(input_data)

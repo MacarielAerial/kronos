@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  kronos:
+    build:
+      context: .
+      target: base
+      dockerfile: Dockerfile
+      args:
+        ENVIRONMENT: dev
+    image: kronos-base:0.0.1
+    container_name: kronos
+    ports:
+      - '5000:8080'
+    volumes:
+      - .:/app

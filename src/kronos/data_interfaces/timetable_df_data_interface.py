@@ -38,8 +38,8 @@ class TimeTableDFDataInterface:
         # Data Cleaning
         #
 
-        # Transpose the table because homogenous data is oriented column wise
-        timetable_df = pd.DataFrame(sheet_values).transpose()
+        # Parse as a dataframe with untidy data
+        timetable_df = pd.DataFrame(sheet_values)
         # Empty strings should be interpreted as nulls
         timetable_df.replace("", np.nan, inplace=True)
 
