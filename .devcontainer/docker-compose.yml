@@ -1,9 +1,5 @@
 version: '3.8'
 services:
   kronos:
-    volumes:
-      # Mount the repo at default location
-      - ..:/workspaces:cached
-
     # Prevent the container from exiting after initialisation
     command: /bin/sh -c "while sleep 1000; do :; done"
