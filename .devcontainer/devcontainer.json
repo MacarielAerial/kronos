@@ -17,7 +17,7 @@
 
 	// Mount ssh directory into the container instance
 	"mounts": [
-		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind,consistency=cached"
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
 	],
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
