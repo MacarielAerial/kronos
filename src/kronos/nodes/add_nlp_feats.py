@@ -148,10 +148,12 @@ def assemble_nlp_ntuples_etuples(
     )
 
 
+# TODO: Find out how to reconcile the lint rule conflict between black and ruff
+# fmt: off
 def prep_nlp_ntuples_etuples_input(
     df: DataFrame, spacy_pipeline: Language
 ) -> Tuple[
-    List[str],
+    List[str],  # fmt: on
     List[str],
     List[str],
     List[Tuple[int, int]],
@@ -285,11 +287,13 @@ def assemble_nlp_ndfs_edfs(
 def _add_nlp_feats(
     node_dfs: NodeDFs, edge_dfs: EdgeDFs, spacy_pipeline: Language
 ) -> Tuple[NodeDFs, EdgeDFs]:
-    tuple_assembly_input = prep_nlp_ntuples_etuples_input(
+    tuple_input = prep_nlp_ntuples_etuples_input(
         df=node_dfs.to_dict()[NodeType.sheet_cell], spacy_pipeline=spacy_pipeline
     )
     # TODO: Investigates the cause of the following mypy error
-    ntuples_etuples = assemble_nlp_ntuples_etuples(*tuple_assembly_input)  # type: ignore[arg-type]
+    ntuples_etuples = assemble_nlp_ntuples_etuples(
+        *tuple_input  # type: ignore[arg-type]
+    )
     list_nlp_node_df, list_nlp_edge_df = assemble_nlp_ndfs_edfs(*ntuples_etuples)
 
     node_dfs.members.extend(list_nlp_node_df)
