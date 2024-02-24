@@ -158,3 +158,5 @@ cython_debug/
 /data
 /credentials
 /notebooks
+/local_dependencies
+!/local_dependencies/ariadne-0.0.1.tar.gz

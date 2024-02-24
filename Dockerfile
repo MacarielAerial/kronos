@@ -26,7 +26,7 @@ RUN mkdir -p /home/poetry && \
 # Make working directory
 RUN mkdir -p /app
 
-# Copy necessary files
+# TODO: Only copy necessary files
 COPY . /app
 
 # Set working directory

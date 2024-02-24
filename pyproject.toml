@@ -20,6 +20,7 @@ python-dotenv = "^1.0.1"
 pandas = "^2.2.0"
 gspread = "^6.0.2"
 networkx = "^3.2.1"
+spacy = "^3.7.4"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
@@ -69,7 +70,8 @@ testpaths = "tests"
 files = "src"
 mypy_path = "src"
 exclude = [
-    ".venv"
+    ".venv",
+    "tests/data"
 ]
 namespace_packages = true
 explicit_package_bases = true

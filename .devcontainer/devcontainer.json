@@ -44,19 +44,19 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "/app/.venv/bin/python3.10",
+				"python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python3.10",
 				"terminal.integrated.shell.linux": "/bin/bash",
 				"remote.ssh.enableAgentForwarding": true
 			},
 			"extensions": [
 				"vscodevim.vim",
 				"ms-python.python",
-				"ms-python.mypy-type-checker",
 				"charliermarsh.ruff",
 				"ms-toolsai.jupyter",
 				"mechatroner.rainbow-csv",
 				"tamasfe.even-better-toml",
-				"davidanson.vscode-markdownlint"
+				"davidanson.vscode-markdownlint",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	}

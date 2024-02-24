@@ -21,5 +21,5 @@ Kronos is an application which aims to build the backend for an organisation int
 3. Constructs a layout graph from parsed graph elements
 
     ```sh
-    poetry run python -m kronos.pipelines.assemble_kg -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json -png data/02_intermediate/layout_nx_g.json
+    poetry run python -m kronos.pipelines.assemble_kg -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json -png data/03_primary/layout_nx_g.json
     ```

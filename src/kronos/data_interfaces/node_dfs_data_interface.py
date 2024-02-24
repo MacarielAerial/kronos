@@ -17,17 +17,26 @@ logger = logging.getLogger(__name__)
 
 
 class NodeAttrKey(str, Enum):
+    # Default
     nid = "nid"
     ntype = "ntype"
+
+    # Layout
     text = "text"
     coord = "coord"
 
 
 class NodeType(str, Enum):
+    # Layout
     sheet_cell = "SheetCell"
+
+    # Semantics
     token = "Token"
+    ent = "Ent"
+    ent_label = "EntLabel"
 
 
+# Layout
 SheetCellTuple = namedtuple(
     "SheetCellTuple",
     [
@@ -37,10 +46,14 @@ SheetCellTuple = namedtuple(
         "coord",
     ],
 )
+
+# Semantics
 TokenTuple = namedtuple(
     "TokenTuple",
     ["nid", "ntype", "text"],
 )
+EntTuple = namedtuple("EntTuple", ["nid", "ntype", "text"])
+EntLabelTuple = namedtuple("EntLabelTuple", ["nid", "ntype", "text"])
 
 
 @dataclass
