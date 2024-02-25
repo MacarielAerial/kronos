@@ -120,7 +120,7 @@ def test_assemble_nlp_ntuples_etuples_edge() -> None:
 
 
 def test_prep_nlp_ntuples_etuples_input_typical(
-    sm_spacy_pipeline: Language,
+    en_sm_spacy_pipeline: Language,
 ) -> None:
     # Arrange
     data = {"nid": [0, 1], "text": ["Cape Town South Africa", "Shanghai repeat repeat"]}
@@ -138,7 +138,7 @@ def test_prep_nlp_ntuples_etuples_input_typical(
         i_token_in_doc,
         i_token_in_ent,
         i_ent_in_doc,
-    ) = prep_nlp_ntuples_etuples_input(df, sm_spacy_pipeline)
+    ) = prep_nlp_ntuples_etuples_input(df, en_sm_spacy_pipeline)
 
     # Assert
     assert len(token) > 0
@@ -154,11 +154,11 @@ def test_prep_nlp_ntuples_etuples_input_typical(
     # Continue with assertions for other outputs
 
 
-def test_prep_nlp_ntuples_etuples_input_edge(sm_spacy_pipeline: Language) -> None:
+def test_prep_nlp_ntuples_etuples_input_edge(en_sm_spacy_pipeline: Language) -> None:
     empty_df = DataFrame()
 
     with pytest.raises(KeyError):
-        prep_nlp_ntuples_etuples_input(empty_df, sm_spacy_pipeline)
+        prep_nlp_ntuples_etuples_input(empty_df, en_sm_spacy_pipeline)
 
 
 def test_assemble_nlp_ndfs_edfs_typical() -> None:

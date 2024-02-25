@@ -1,3 +1,6 @@
+from pathlib import Path
+from unittest.mock import Mock, mock_open, patch
+
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -9,7 +12,10 @@ from kronos.data_interfaces.node_dfs_data_interface import (
     NodeDFsDataInterface,
     NodeType,
 )
-from tests.conftest import TestDataPaths
+
+#
+# Dataclass tests
+#
 
 
 def test_node_dfs_validate_unique_types_and_ids() -> None:
@@ -96,19 +102,51 @@ def test_node_dfs_ntypes_property() -> None:
     ], "ntypes property should list all node types correctly"
 
 
-def test_save(mock_node_dfs: NodeDFs, test_data_paths: TestDataPaths) -> None:
-    node_dfs_data_interface = NodeDFsDataInterface(
-        filepath=test_data_paths.path_saved_node_dfs
-    )
-    node_dfs_data_interface.save(mock_node_dfs)
-
-    assert test_data_paths.path_saved_node_dfs.is_file()
+#
+# Data interface tests
+#
 
 
-def test_load(test_data_paths: TestDataPaths) -> None:
-    node_dfs_data_interface = NodeDFsDataInterface(
-        filepath=test_data_paths.path_mock_node_dfs
-    )
-    node_dfs = node_dfs_data_interface.load()
+@patch("pathlib.Path.mkdir")
+@patch("builtins.open", new_callable=mock_open)
+@patch("orjson.dumps")
+def test_save(
+    mock_dumps, mock_file: Mock, mock_mkdir: Mock, mock_node_dfs: NodeDFs
+) -> None:
+    # Arrange
+    filepath = Path("/fake/path/nodes.json")
+    mock_dumps.return_value = b"{}"  # Mock the JSON bytes returned by orjson.dumps
 
-    assert len(node_dfs.members) == 2
+    # Act
+    interface = NodeDFsDataInterface(filepath=filepath)
+    with patch.object(Path, "exists") as mock_exists:
+        mock_exists.return_value = False
+        interface.save(mock_node_dfs)
+
+    # Assert
+    mock_exists.assert_called_once()
+    mock_mkdir.assert_called_once_with(parents=True, exist_ok=True)
+    mock_dumps.assert_called_once()
+    mock_file.assert_called_once_with(filepath, "wb")
+
+
+@patch("builtins.open", new_callable=mock_open, read_data=b"{}")
+@patch("orjson.loads")
+@patch("dacite.from_dict")
+def test_load(mock_from_dict: Mock, mock_loads: Mock, mock_file: Mock) -> None:
+    # Arrange
+    filepath = Path("/fake/path/nodes.json")
+    mock_loads.return_value = {}  # Mock the dictionary returned by orjson.loads
+    mock_from_dict.return_value = NodeDFs(
+        members=[]
+    )  # Mock the NodeDFs object returned by dacite.from_dict
+
+    # Act
+    interface = NodeDFsDataInterface(filepath=filepath)
+    result = interface.load()
+
+    # Assert
+    mock_file.assert_called_once_with(filepath, "rb")
+    mock_loads.assert_called_once()
+    mock_from_dict.assert_called_once()
+    assert isinstance(result, NodeDFs)

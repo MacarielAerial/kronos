@@ -35,14 +35,6 @@ class TestDataPaths:
         return self.own_path / "data"
 
     @property
-    def path_mock_node_dfs(self) -> Path:
-        return self.path_dir_data / "mock_node_dfs.json"
-
-    @property
-    def path_mock_edge_dfs(self) -> Path:
-        return self.path_dir_data / "mock_edge_dfs.json"
-
-    @property
     def path_mock_timetable_df(self) -> Path:
         return self.path_dir_data / "mock_timetable_df.csv"
 
@@ -92,6 +84,10 @@ class TestDataPaths:
     @property
     def path_saved_nx_g(self) -> Path:
         return self.path_dir_output / "saved_nx_g.json"
+
+    @property
+    def path_integration_nx_g(self) -> Path:
+        return self.path_dir_output / "integration_nx_g.json"
 
 
 @fixture
@@ -207,7 +203,7 @@ def mock_nx_g() -> Graph:
 
 
 @fixture
-def sm_spacy_pipeline(test_data_paths: TestDataPaths) -> Language:
+def en_sm_spacy_pipeline(test_data_paths: TestDataPaths) -> Language:
     return spacy.load(test_data_paths.path_en_sm_spacy_pipeline)
 
 
