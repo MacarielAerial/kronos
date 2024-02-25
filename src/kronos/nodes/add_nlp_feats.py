@@ -148,12 +148,10 @@ def assemble_nlp_ntuples_etuples(
     )
 
 
-# TODO: Find out how to reconcile the lint rule conflict between black and ruff
-# fmt: off
 def prep_nlp_ntuples_etuples_input(
     df: DataFrame, spacy_pipeline: Language
-) -> Tuple[
-    List[str],  # fmt: on
+) -> Tuple[  # TODO: Turn the returned object into a named tuple for readability
+    List[str],
     List[str],
     List[str],
     List[Tuple[int, int]],
@@ -290,7 +288,7 @@ def _add_nlp_feats(
     tuple_input = prep_nlp_ntuples_etuples_input(
         df=node_dfs.to_dict()[NodeType.sheet_cell], spacy_pipeline=spacy_pipeline
     )
-    # TODO: Investigates the cause of the following mypy error
+    # : Investigates the cause of the following mypy error
     ntuples_etuples = assemble_nlp_ntuples_etuples(
         *tuple_input  # type: ignore[arg-type]
     )
