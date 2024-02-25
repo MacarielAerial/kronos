@@ -35,9 +35,9 @@ def assemble_nlp_ntuples_etuples(
     i_token_to_ent: List[Tuple[int, int]],
     i_ent_to_cell: List[Tuple[int, int]],
     i_ent_to_label: List[Tuple[int, int]],
-    i_token_in_doc: List[Tuple[int, int]],
-    i_token_in_ent: List[Tuple[int, int]],
-    i_ent_in_doc: List[Tuple[int, int]],
+    i_token_in_doc: List[int],
+    i_token_in_ent: List[int],
+    i_ent_in_doc: List[int],
 ) -> Tuple[
     List[TokenTuple],
     List[EntTuple],
@@ -289,9 +289,7 @@ def _add_nlp_feats(
         df=node_dfs.to_dict()[NodeType.sheet_cell], spacy_pipeline=spacy_pipeline
     )
     # : Investigates the cause of the following mypy error
-    ntuples_etuples = assemble_nlp_ntuples_etuples(
-        *tuple_input  # type: ignore[arg-type]
-    )
+    ntuples_etuples = assemble_nlp_ntuples_etuples(*tuple_input)
     list_nlp_node_df, list_nlp_edge_df = assemble_nlp_ndfs_edfs(*ntuples_etuples)
 
     node_dfs.members.extend(list_nlp_node_df)
