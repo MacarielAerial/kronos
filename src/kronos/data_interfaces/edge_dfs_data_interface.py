@@ -17,23 +17,37 @@ logger = logging.getLogger(__name__)
 
 
 class EdgeAttrKey(str, Enum):
+    # Default
     src_nid = "src_nid"
     dst_nid = "dst_nid"
     src_ntype = "src_ntype"
     etype = "etype"
     dst_ntype = "dst_ntype"
+
+    # Layout
     distance = "distance"
+
+    # Semantics
+    i_token_in_doc = "i_token_in_doc"
+    i_token_in_ent = "i_token_in_ent"
+    i_ent_in_doc = "i_ent_in_doc"
 
 
 class EdgeType(str, Enum):
+    # Layout
     up = "Up"
     down = "Down"
     left = "Left"
     right = "Right"
 
+    # Semantics
     token_to_cell = "TokenToCell"
+    token_to_ent = "TokenToEnt"
+    ent_to_cell = "EntToCell"
+    ent_to_label = "EntToLabel"
 
 
+# Layout
 UpTuple = namedtuple(
     "UpTuple",
     ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "distance"],
@@ -50,8 +64,22 @@ RightTuple = namedtuple(
     "RightTuple",
     ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "distance"],
 )
+
+# Semantics
 TokenToCellTuple = namedtuple(
-    "TokenToCellTuple", ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype"]
+    "TokenToCellTuple",
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "i_token_in_doc"],
+)
+TokenToEntTuple = namedtuple(
+    "TokenToEntTuple",
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "i_token_in_ent"],
+)
+EntToCellTuple = namedtuple(
+    "EntToCellTuple",
+    ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype", "i_ent_in_doc"],
+)
+EntToLabelTuple = namedtuple(
+    "EntToLabelTuple", ["src_nid", "dst_nid", "src_ntype", "etype", "dst_ntype"]
 )
 
 TraversalTuple = Union[UpTuple, DownTuple, LeftTuple, RightTuple]

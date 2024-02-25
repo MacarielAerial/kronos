@@ -14,25 +14,26 @@ include = [
 
 [tool.poetry.dependencies]
 python = "~3.10"
-orjson = "^3.9.14"
+orjson = "^3.9.15"
 dacite = "^1.8.1"
 python-dotenv = "^1.0.1"
-pandas = "^2.2.0"
+pandas = "^2.2.1"
 gspread = "^6.0.2"
 networkx = "^3.2.1"
+spacy = "^3.7.4"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
-pytest = "^8.0.1"
+pytest = "^8.0.2"
 mypy = "^1.8.0"
 flake8 = "^7.0.0"
-coverage = {extras = ["toml"], version = "^7.4.1"}
+coverage = {extras = ["toml"], version = "^7.4.3"}
 black = "^24.2.0"
 yamllint = "^1.35.1"
-semgrep = "^1.61.1"
+semgrep = "^1.62.0"
 ipykernel = "^6.29.2"
 nbformat = "^5.9.2"
-ruff = "^0.2.1"
+ruff = "^0.2.2"
 shellcheck-py = "^0.9.0.6"
 pandas-stubs = "^2.2.0.240218"
 networkx-stubs = "^0.0.1"
@@ -69,7 +70,8 @@ testpaths = "tests"
 files = "src"
 mypy_path = "src"
 exclude = [
-    ".venv"
+    ".venv",
+    "tests/data"
 ]
 namespace_packages = true
 explicit_package_bases = true

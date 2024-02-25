@@ -1,24 +1,25 @@
 # Kronos
 
 ## Executive Summary
+
 Kronos is an application which aims to build the backend for an organisation intelligence platform. In the scope of this iteration, Kronos connects to various information sources, organises information into a structured format before storing the information in a database.
 
 ## Code Examples
 
 1. Download a google sheet which contains timetable information as a csv file
 
-```sh
-poetry run python -m kronos.pipelines.download_timetable_df -psj credentials/kronos-408821-b353d5af55b8.json -ptd data/01_raw/timetable_df.csv
-```
+    ```sh
+    poetry run python -m kronos.pipelines.download_timetable_df -psj credentials/kronos-408821-b353d5af55b8.json -ptd data/01_raw/timetable_df.csv
+    ```
 
 2. Parse timetable dataframe into graph elements of a layout graph
 
-```sh
-poetry run python -m kronos.pipelines.df_to_layout_graph -ptd data/01_raw/timetable_df.csv/ -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json
-```
+    ```sh
+    poetry run python -m kronos.pipelines.df_to_layout_graph -ptd data/01_raw/timetable_df.csv/ -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json
+    ```
 
 3. Constructs a layout graph from parsed graph elements
 
-```sh
-poetry run python -m kronos.pipelines.assemble_kg -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json -png data/02_intermediate/layout_nx_g.json
-```
+    ```sh
+    poetry run python -m kronos.pipelines.assemble_kg -pnd data/02_intermediate/layout_node_dfs.json -ped data/02_intermediate/layout_edge_dfs.json -png data/03_primary/layout_nx_g.json
+    ```

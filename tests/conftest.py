@@ -3,9 +3,11 @@ import shutil
 from pathlib import Path
 from typing import List
 
+import spacy
 from networkx import Graph
 from pandas import DataFrame
 from pytest import ExitCode, Session, fixture
+from spacy.language import Language
 
 from kronos.data_interfaces.edge_dfs_data_interface import (
     EdgeAttrKey,
@@ -33,20 +35,19 @@ class TestDataPaths:
         return self.own_path / "data"
 
     @property
-    def path_mock_node_dfs(self) -> Path:
-        return self.path_dir_data / "mock_node_dfs.json"
-
-    @property
-    def path_mock_edge_dfs(self) -> Path:
-        return self.path_dir_data / "mock_edge_dfs.json"
-
-    @property
     def path_mock_timetable_df(self) -> Path:
         return self.path_dir_data / "mock_timetable_df.csv"
 
     @property
     def path_mock_nx_g(self) -> Path:
         return self.path_dir_data / "mock_nx_g.json"
+
+    @property
+    def path_en_sm_spacy_pipeline(self) -> Path:
+        return (
+            self.path_dir_data
+            / "en_core_web_sm-3.7.1/en_core_web_sm-3.7.1/en_core_web_sm/en_core_web_sm-3.7.1"
+        )
 
     # Test input data paths
 
@@ -83,6 +84,10 @@ class TestDataPaths:
     @property
     def path_saved_nx_g(self) -> Path:
         return self.path_dir_output / "saved_nx_g.json"
+
+    @property
+    def path_integration_nx_g(self) -> Path:
+        return self.path_dir_output / "integration_nx_g.json"
 
 
 @fixture
@@ -195,6 +200,11 @@ def mock_nx_g() -> Graph:
     nx_g.add_edge(0, 1, etype="lol")
 
     return nx_g
+
+
+@fixture
+def en_sm_spacy_pipeline(test_data_paths: TestDataPaths) -> Language:
+    return spacy.load(test_data_paths.path_en_sm_spacy_pipeline)
 
 
 def pytest_sessionstart(session: Session) -> None:
