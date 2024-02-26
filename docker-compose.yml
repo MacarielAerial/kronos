@@ -1,14 +1,53 @@
 version: '3.8'
 
 services:
+  dgraph-zero:
+    image: dgraph/dgraph:latest
+    volumes:
+      - type: volume
+        source: dgraph-zero
+        target: /dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=dgraph-zero:5080
+
+  dgraph-alpha:
+    image: dgraph/dgraph:latest
+    volumes:
+      - type: volume
+        source: dgraph-alpha
+        target: /dgraph
+    ports:
+      - 8080:8080
+      - 9080:9080
+    restart: on-failure
+    command: dgraph alpha --my=dgraph-alpha:7080 --zero=dgraph-zero:5080
+    depends_on:
+      - dgraph-zero
+
+  ratel:
+    image: dgraph/ratel:latest
+    ports:
+      - 8000:8000
+    command: dgraph-ratel
+    depends_on:
+      - dgraph-alpha
+
   kronos:
     build:
       context: .
       target: dev
       dockerfile: Dockerfile
-    image: kronos-dev:0.0.1
+    image: kronos-dev
     container_name: kronos-server
     ports:
       - '5000:8080'
-    volumes:
-      - .:/app
+    depends_on:
+      - dgraph-zero
+      - dgraph-alpha
+
+volumes:
+  dgraph-zero:
+  dgraph-alpha:

@@ -7,12 +7,10 @@ FROM python:3.10 AS dev
 ENV PATH = "${PATH}:/home/poetry/bin"
 ENV POETRY_VIRTUALENVS_IN_PROJECT=1
 
-# Install graphviz and git
-RUN apt update && apt install -y \
-    graphviz-dev
-
-# Install git lfs
+# Install graphviz, git and git lfs
 RUN apt-get update && apt-get install -y \
+    graphviz \
+    graphviz-dev \
     git \
     git-lfs
 

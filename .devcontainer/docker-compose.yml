@@ -1,5 +1,8 @@
 version: '3.8'
 services:
   kronos:
+    volumes:
+      - .:/workspaces/kronos:cached
+
     # Prevent the container from exiting after initialisation
     command: /bin/sh -c "while sleep 1000; do :; done"
