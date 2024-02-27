@@ -18,9 +18,11 @@ def add_nlp_feats(
     # Data Access - Input
     layout_node_dfs_data_interface = NodeDFsDataInterface(filepath=path_layout_node_dfs)
     layout_node_dfs = layout_node_dfs_data_interface.load()
+    layout_node_dfs.validate()
 
     layout_edge_dfs_data_interface = EdgeDFsDataInterface(filepath=path_layout_edge_dfs)
     layout_edge_dfs = layout_edge_dfs_data_interface.load()
+    layout_node_dfs.validate()
 
     spacy_pipeline_data_interface = SpacyPipelineDataInterface(
         filepath=path_spacy_pipeline
@@ -37,6 +39,12 @@ def add_nlp_feats(
     )
 
     # Data Access - Output
+    semantics_node_dfs.validate()
+    semantics_node_dfs.report()
+
+    semantics_edge_dfs.validate()
+    semantics_edge_dfs.report()
+
     semantics_node_dfs_data_interface = NodeDFsDataInterface(
         filepath=path_semantics_node_dfs
     )

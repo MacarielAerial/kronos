@@ -66,6 +66,7 @@ def find_first_non_null(  # noqa: C901
     return None
 
 
+# TODO: Break the following function down to smaller chunks
 def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
     sheet_cells: List[SheetCellTuple] = []
     traversals: List[TraversalTuple] = []
@@ -146,7 +147,5 @@ def _df_to_layout_graph(df: DataFrame) -> Tuple[NodeDF, EdgeDFs]:
         logger.info(
             f"Factored out {etype} edge dataframe has shape {df_by_etype.shape}"
         )
-
-    traversal_edge_dfs.validate()
 
     return sheet_cell_node_df, traversal_edge_dfs
