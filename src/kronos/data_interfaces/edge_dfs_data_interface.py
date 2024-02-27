@@ -5,7 +5,7 @@ from collections import namedtuple
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Set, Union
+from typing import Dict, List, Set, Tuple, Union
 
 import dacite
 import orjson
@@ -46,6 +46,13 @@ class EdgeType(str, Enum):
     ent_to_cell = "EntToCell"
     ent_to_label = "EntToLabel"
 
+
+TraversalEdgeTypes: Tuple[EdgeType, ...] = (
+    EdgeType.up,
+    EdgeType.down,
+    EdgeType.left,
+    EdgeType.right,
+)
 
 # Layout
 UpTuple = namedtuple(
@@ -111,6 +118,10 @@ class EdgeDFs:
         }
 
         return etype_to_df
+
+    @property
+    def etypes(self) -> List[EdgeType]:
+        return [edge_df.etype for edge_df in self.members]
 
 
 class EdgeDFsDataInterface:
