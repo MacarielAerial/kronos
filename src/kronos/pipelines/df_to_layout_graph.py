@@ -17,8 +17,16 @@ def df_to_layout_graph(
     sheet_cell_node_df, traversal_edge_dfs = _df_to_layout_graph(df=timetable_df)
 
     # Data Access - Output
+    node_dfs = NodeDFs(members=[sheet_cell_node_df])
+
+    node_dfs.validate()
+    node_dfs.report()
+
+    traversal_edge_dfs.validate()
+    traversal_edge_dfs.report()
+
     node_dfs_data_interface = NodeDFsDataInterface(filepath=path_node_dfs)
-    node_dfs_data_interface.save(node_dfs=NodeDFs(members=[sheet_cell_node_df]))
+    node_dfs_data_interface.save(node_dfs=node_dfs)
 
     edge_dfs_data_interface = EdgeDFsDataInterface(filepath=path_edge_dfs)
     edge_dfs_data_interface.save(edge_dfs=traversal_edge_dfs)

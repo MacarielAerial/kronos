@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Set, Tuple, Union
@@ -112,6 +112,9 @@ class EdgeDFs:
                 f"canonical edge types are not unique:\n{list_etype}"
             )
 
+    def report(self) -> None:
+        logger.info(f"Edge dataframes summary:\n{self.summary}")
+
     def to_dict(self) -> Dict[EdgeType, DataFrame]:
         etype_to_df: Dict[EdgeType, DataFrame] = {
             edge_df.etype: edge_df.df for edge_df in self.members
@@ -122,6 +125,28 @@ class EdgeDFs:
     @property
     def etypes(self) -> List[EdgeType]:
         return [edge_df.etype for edge_df in self.members]
+
+    @property
+    def summary(self) -> DataFrame:
+        etype = [edge_df.etype for edge_df in self.members]
+        shape = [edge_df.df.shape for edge_df in self.members]
+        column = [edge_df.df.columns.tolist() for edge_df in self.members]
+
+        meta = MetaEdgeDFs(etype=etype, shape=shape, column=column)
+
+        return meta.to_df()
+
+
+@dataclass
+class MetaEdgeDFs:
+    etype: List[EdgeType]
+    shape: List[Tuple[int, int]]
+    column: List[List[str]]
+
+    def to_df(self) -> DataFrame:
+        data = {field.name: getattr(self, field.name) for field in fields(self)}
+
+        return DataFrame(data)
 
 
 class EdgeDFsDataInterface:

@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -15,6 +16,8 @@ from kronos.data_interfaces.node_dfs_data_interface import (
     NodeType,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def element_wise_sum_coords(coord: List[List[int]]) -> List[int]:
     """e.g. pd.Series([[1, 0], [0, 1]]) row-wise aggregation to [[1, 1]]"""
@@ -31,7 +34,8 @@ def concat_nid(nid: pd.Series) -> list:
 def merge_sheet_cell_nodes(
     df_sheet_cell: DataFrame,
 ) -> Tuple[DataFrame, Dict[int, int]]:
-    print(df_sheet_cell)
+    logger.info(f"Merging dataframe shaped {df_sheet_cell.shape} based on text...")
+
     # Nodes with identical node type and text values set to be merged
     grouped = df_sheet_cell.groupby([NodeAttrKey.ntype.value, NodeAttrKey.text.value])
 
@@ -64,6 +68,11 @@ def merge_sheet_cell_nodes(
 def update_nids_in_df_edge(
     df_edge: DataFrame, nid_mapping: Dict[int, int]
 ) -> DataFrame:
+    logger.info(
+        f"Updating edge df shaped {df_edge.shape} "
+        "based on merged node nid mapping..."
+    )
+
     # Update src_nid and dst_nid based on the nid_mapping
     df_edge[EdgeAttrKey.src_nid.value] = df_edge[EdgeAttrKey.src_nid.value].apply(
         lambda x: nid_mapping[x]
@@ -78,8 +87,11 @@ def update_nids_in_df_edge(
 def _contract_sheet_cell_nodes(
     node_dfs: NodeDFs, edge_dfs: EdgeDFs
 ) -> Tuple[NodeDFs, EdgeDFs]:
+    ntype_to_merge = NodeType.sheet_cell
+    logger.info(f"{ntype_to_merge.value} node dataframe is set for merging")
+
     # Identify index of sheelt cell node dataframe
-    i = node_dfs.ntypes.index(NodeType.sheet_cell)
+    i = node_dfs.ntypes.index(ntype_to_merge)
 
     # Merge nodes based on common text
     node_dfs.members[i].df, nid_mapping = merge_sheet_cell_nodes(
@@ -89,6 +101,10 @@ def _contract_sheet_cell_nodes(
     # Replace node references in edge dataframes
     for i in range(len(edge_dfs.members)):
         if edge_dfs.members[i].etype in TraversalEdgeTypes:
+            logger.info(
+                f"{edge_dfs.members[i].etype.value} edge dataframe is set "
+                "to be updated based on merged node mapping"
+            )
             edge_dfs.members[i].df = update_nids_in_df_edge(
                 df_edge=edge_dfs.members[i].df, nid_mapping=nid_mapping
             )

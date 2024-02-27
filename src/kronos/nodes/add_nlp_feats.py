@@ -22,7 +22,6 @@ from kronos.data_interfaces.node_dfs_data_interface import (
     NodeType,
     TokenTuple,
 )
-from kronos.nodes.assemble_kg import validate_node_dfs_and_edge_dfs
 
 logger = logging.getLogger(__name__)
 
@@ -288,15 +287,10 @@ def _add_nlp_feats(
     tuple_input = prep_nlp_ntuples_etuples_input(
         df=node_dfs.to_dict()[NodeType.sheet_cell], spacy_pipeline=spacy_pipeline
     )
-    # : Investigates the cause of the following mypy error
     ntuples_etuples = assemble_nlp_ntuples_etuples(*tuple_input)
     list_nlp_node_df, list_nlp_edge_df = assemble_nlp_ndfs_edfs(*ntuples_etuples)
 
     node_dfs.members.extend(list_nlp_node_df)
-    node_dfs.validate()
     edge_dfs.members.extend(list_nlp_edge_df)
-    edge_dfs.validate()
-
-    validate_node_dfs_and_edge_dfs(node_dfs=node_dfs, edge_dfs=edge_dfs)
 
     return node_dfs, edge_dfs

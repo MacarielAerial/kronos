@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
@@ -63,6 +63,18 @@ class NodeDF:
 
 
 @dataclass
+class MetaNodeDFs:
+    ntype: List[NodeType]
+    shape: List[Tuple[int, int]]
+    column: List[List[str]]
+
+    def to_df(self) -> DataFrame:
+        data = {field.name: getattr(self, field.name) for field in fields(self)}
+
+        return DataFrame(data)
+
+
+@dataclass
 class NodeDFs:
     members: List[NodeDF]
 
@@ -91,6 +103,9 @@ class NodeDFs:
                 f"{self.__class__.__name__} object"
             )
 
+    def report(self) -> None:
+        logger.info(f"Node dataframes summary:\n{self.summary}")
+
     def to_dict(self) -> Dict[NodeType, DataFrame]:
         ntype_to_df: Dict[NodeType, DataFrame] = {
             node_df.ntype: node_df.df for node_df in self.members
@@ -101,6 +116,16 @@ class NodeDFs:
     @property
     def ntypes(self) -> List[NodeType]:
         return [node_df.ntype for node_df in self.members]
+
+    @property
+    def summary(self) -> DataFrame:
+        ntype = [node_df.ntype for node_df in self.members]
+        shape = [node_df.df.shape for node_df in self.members]
+        column = [node_df.df.columns.tolist() for node_df in self.members]
+
+        meta = MetaNodeDFs(ntype=ntype, shape=shape, column=column)
+
+        return meta.to_df()
 
 
 class NodeDFsDataInterface:
