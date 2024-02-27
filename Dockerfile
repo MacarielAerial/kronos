@@ -1,6 +1,8 @@
 #
 # Multi Stage: Dev Image
+# Multi Stage: Dev Image
 #
+FROM python:3.10 AS dev
 FROM python:3.10 AS dev
 
 # Set environemntal variables
@@ -24,10 +26,19 @@ RUN mkdir -p /home/poetry && \
 #
 
 FROM dev AS bake
+    curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
+    poetry self add poetry-plugin-up
+
+#
+# Multi Stage: Bake Image
+#
+
+FROM dev AS bake
 
 # Make working directory
 RUN mkdir -p /app
 
+# TODO: Only copy necessary files
 # TODO: Only copy necessary files
 COPY . /app
 
@@ -36,14 +47,17 @@ WORKDIR /app
 
 # Install python dependencies in container
 RUN poetry install --without dev,vis
+RUN poetry install --without dev,vis
 
 #
 # Multi Stage: Runtime Image
 #
 
+
 FROM python:3.10-slim AS runtime
 
 # Copy over baked environment
+COPY --from=bake /app /app
 COPY --from=bake /app /app
 
 # Set 

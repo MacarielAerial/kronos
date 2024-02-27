@@ -1,4 +1,5 @@
 version: '3.8'
+version: '3.8'
 
 services:
   dgraph-zero:
@@ -38,6 +39,7 @@ services:
   kronos:
     build:
       context: .
+      target: dev
       target: dev
       dockerfile: Dockerfile
     image: kronos-dev

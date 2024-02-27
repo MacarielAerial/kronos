@@ -20,6 +20,7 @@
 	// Mount ssh directory into the container instance
 	"mounts": [
 		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
 	],
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
@@ -50,6 +51,7 @@
 		"vscode": {
 			"settings": {
 				"python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python3.10",
+				"python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python3.10",
 				"terminal.integrated.shell.linux": "/bin/bash",
 				"remote.ssh.enableAgentForwarding": true
 			},
@@ -60,6 +62,8 @@
 				"ms-toolsai.jupyter",
 				"mechatroner.rainbow-csv",
 				"tamasfe.even-better-toml",
+				"davidanson.vscode-markdownlint",
+				"ms-azuretools.vscode-docker"
 				"davidanson.vscode-markdownlint",
 				"ms-azuretools.vscode-docker"
 			]
