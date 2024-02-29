@@ -22,6 +22,7 @@ gspread = "^6.0.2"
 networkx = "^3.2.1"
 spacy = "^3.7.4"
 sentence-transformers = "^2.4.0"
+weaviate-client = "^4.4.4"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
