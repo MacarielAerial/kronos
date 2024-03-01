@@ -87,7 +87,9 @@ show_error_codes = true
 
 [[tool.mypy.overrides]]
 module = [
-    "gspread.*"
+    "gspread.*",
+    "weaviate.*",
+    "sentence_transformers.*"
 ]
 ignore_missing_imports = true
 warn_return_any = false

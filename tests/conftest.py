@@ -119,6 +119,10 @@ def mock_node_df() -> NodeDF:
         {
             NodeAttrKey.nid.value: [0, 1],
             NodeAttrKey.ntype.value: [NodeType.sheet_cell.value] * 2,
+            NodeAttrKey.text.value: [
+                "Dummy Sheet Cell text 1.",
+                "Dummy Sheet Cell text 2",
+            ],
         }
     )
     return NodeDF(ntype=NodeType.sheet_cell, df=df_sheet_cell)
@@ -135,6 +139,7 @@ def mock_node_dfs(mock_node_df: NodeDF) -> NodeDFs:
                     {
                         NodeAttrKey.nid.value: [0],
                         NodeAttrKey.ntype.value: [NodeType.token.value],
+                        NodeAttrKey.text.value: ["Dummy Token Text"],
                     }
                 ),
             ),

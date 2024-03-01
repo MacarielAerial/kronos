@@ -1,1 +1,0 @@
-def vectorise_with_word_vectors
