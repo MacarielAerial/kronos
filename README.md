@@ -48,3 +48,9 @@ Kronos is an application which aims to build the backend for an organisation int
     ```sh
     poetry run python -m kronos.pipelines.assemble_kg -pnd data/02_intermediate/semantics_node_dfs.json -ped data/02_intermediate/semantics_edge_dfs.json -png data/03_primary/semantics_nx_g.json
     ```
+
+8. Vectorise text features of certain types of nodes with average word vectors
+
+    ```sh
+    poetry run python -m kronos.pipelines.vectorise_with_word_vector_local -psnd data/02_intermediate/semantics_node_dfs.json -psp local_dependencies/model-best/ -pte data/04_feature/word_vec_emb.npz
+    ```

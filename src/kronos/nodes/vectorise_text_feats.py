@@ -1,7 +1,7 @@
 import logging
 import multiprocessing
 from contextlib import contextmanager
-from typing import Iterable, List, Tuple
+from typing import Generator, Iterable, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -25,7 +25,7 @@ def prep_emb_input(list_node_df: List[NodeDF]) -> List[str]:
 
     logger.info(
         "Extracting text arrays from node dataframes of following "
-        f"node types:\n{[[node_df.ntype for node_df in list_node_df]]}"
+        f"node types:\n{[[node_df.ntype.value for node_df in list_node_df]]}"
     )
 
     list_text_series = [node_df.df[NodeAttrKey.text.value] for node_df in list_node_df]
@@ -35,7 +35,7 @@ def prep_emb_input(list_node_df: List[NodeDF]) -> List[str]:
         f"node type:\n{[len(a_series) for a_series in list_text_series]}"
     )
 
-    text = set(pd.concat(list_text_series, ignore_index=True).unique())
+    text = list(pd.concat(list_text_series, ignore_index=True).unique())
 
     logger.info(f"{len(text)} unique text strings are set to be embedeed")
 
@@ -60,7 +60,7 @@ def embed_with_avg_word_vec(
     logger.info(f"Using {n_process} processes for spacy pipe operation")
 
     for doc in spacy_pipeline.pipe(texts=text, n_process=n_process):
-        yield (doc.text, doc.vector)
+        yield (doc.text, doc.vector)  # type: ignore[misc]
 
 
 def _vectorise_with_word_vector(
@@ -71,7 +71,7 @@ def _vectorise_with_word_vector(
             node_df for node_df in node_dfs.members if node_df.ntype in WV_NTYPES
         ]
     )
-    yield embed_with_avg_word_vec(text=text, spacy_pipeline=spacy_pipeline)
+    return embed_with_avg_word_vec(text=text, spacy_pipeline=spacy_pipeline)
 
 
 #
@@ -80,18 +80,22 @@ def _vectorise_with_word_vector(
 
 
 @contextmanager
-def multi_process_context(st: SentenceTransformer) -> Iterable[dict]:
-    model = SentenceTransformer(st)
-    pool = model.start_multi_process_pool()  # Default either with all CUDA or four CPUs
+def multi_process_context(  # type: ignore[no-any-unimported]
+    sent_tx: SentenceTransformer,
+) -> Generator[dict, None, None]:
+    pool = (
+        sent_tx.start_multi_process_pool()
+    )  # Default either with all CUDA or four CPUs
 
     try:  # Use try-finally block to make sure resources are stopped regardless
         yield pool
     finally:
-        model.stop_multi_process_pool(pool)
+        sent_tx.stop_multi_process_pool(pool)
 
 
-def embed_with_sent_tx(
-    text: List[str], sent_tx: SentenceTransformer
+def embed_with_sent_tx(  # type: ignore[no-any-unimported]
+    text: List[str],
+    sent_tx: SentenceTransformer,
 ) -> Iterable[Tuple[str, np.ndarray]]:
     logger.info(
         f"Embedding text array of length {len(text)} with a sentence transformer"
@@ -102,7 +106,7 @@ def embed_with_sent_tx(
     n_batch = len(text) // batch_size + (0 if len(text) % batch_size == 0 else 1)
 
     # Use context manager to prevent resource leak
-    with multi_process_context(st=sent_tx) as pool:  # type: ignore[var-annotated]
+    with multi_process_context(sent_tx=sent_tx) as pool:
         logger.info(
             "Using the following pool configuration for sentence "
             f"transformer multi encoding:\n{pool}"
@@ -112,7 +116,7 @@ def embed_with_sent_tx(
         for i_batch in range(n_batch):
             # Calculate start and end index for the current batch
             start_idx = i_batch * batch_size
-            end_idx = start_idx + batch_size
+            end_idx = min(start_idx + batch_size, len(text))
 
             # Identify input chunk
             text_chunk = text[start_idx:end_idx]
@@ -123,11 +127,11 @@ def embed_with_sent_tx(
             )  # Double default batch size
 
             # Yield one pairs of text-embedding at a time
-            for i_text in text_chunk:
+            for i_text in range(len(text_chunk)):
                 yield text_chunk[i_text], emb_chunk[i_text]
 
 
-def _vectorise_with_sentence_transformer(
+def _vectorise_with_sentence_transformer(  # type: ignore[no-any-unimported]
     node_dfs: NodeDFs, sentence_transformer: SentenceTransformer
 ) -> Iterable[Tuple[str, np.ndarray]]:
     text = prep_emb_input(
@@ -135,4 +139,4 @@ def _vectorise_with_sentence_transformer(
             node_df for node_df in node_dfs.members if node_df.ntype in TX_NTYPES
         ]
     )
-    yield embed_with_sent_tx(text=text, sent_tx=sentence_transformer)
+    return embed_with_sent_tx(text=text, sent_tx=sentence_transformer)
