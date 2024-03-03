@@ -24,7 +24,7 @@ def test_contracted_sheet_cell_nodes(
     mock_paths = {
         "path_semantics_node_dfs": Path("/fake/semantics_node_dfs"),
         "path_sentence_transformer": Path("/fake/sentence_transformer/"),
-        "path_text_emb": Path("/fake/text__emb"),
+        "path_text_emb": Path("/fake/text_emb"),
     }
 
     mock_semantics_node_dfs = MagicMock()
