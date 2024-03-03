@@ -94,12 +94,19 @@ def multi_process_context(  # type: ignore[no-any-unimported]
 
 
 def embed_with_sent_tx(  # type: ignore[no-any-unimported]
-    text: List[str],
-    sent_tx: SentenceTransformer,
+    text: List[str], sent_tx: SentenceTransformer, use_multi: bool = False
 ) -> Iterable[Tuple[str, np.ndarray]]:
     logger.info(
         f"Embedding text array of length {len(text)} with a sentence transformer"
     )
+
+    # Use one process for small data
+    if not use_multi:
+        emb = sent_tx.encode(sentences=text, show_progress_bar=True)
+        for i_text in range(len(text)):
+            yield text[i_text], emb[i_text]
+
+        return
 
     # Calculate the total number of batches
     batch_size = min(512, len(text))

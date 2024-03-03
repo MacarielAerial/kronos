@@ -1,3 +1,5 @@
+# TODO: Use pydantic to type the tuple data structure in this module
+
 import logging
 from enum import Enum
 from pathlib import Path

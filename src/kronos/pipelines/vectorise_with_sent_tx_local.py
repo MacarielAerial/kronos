@@ -21,7 +21,7 @@ def vectorise_with_sent_tx_local(
     semantics_node_dfs = semantics_node_dfs_data_interface.load()
 
     sentence_transformer = SentenceTransformer(
-        model_name_or_path=path_sentence_transformer.resolve()
+        model_name_or_path=str(path_sentence_transformer)
     )
 
     # Task Processing

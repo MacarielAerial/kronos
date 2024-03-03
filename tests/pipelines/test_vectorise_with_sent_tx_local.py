@@ -49,7 +49,7 @@ def test_contracted_sheet_cell_nodes(
     )
     mock_node_interface.return_value.load.assert_called_once()
     mock_sent_tx.assert_called_once_with(
-        model_name_or_path=mock_paths["path_sentence_transformer"]
+        model_name_or_path=str(mock_paths["path_sentence_transformer"])
     )
 
     mock_vectorise_with_sent_tx.assert_called_once_with(

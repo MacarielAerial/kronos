@@ -138,9 +138,30 @@ def test_vectorise_with_word_vector(
 def mock_sentence_transformer() -> MagicMock:
     st = MagicMock()
     st.start_multi_process_pool.return_value = "mock_pool"
-    st.encode_multi_process.return_value = [np.array([1, 2, 3]) for _ in range(512)]
+    st.encode_multi_process.return_value = [np.array([1, 2, 3]) for _ in range(600)]
+    st.encode.return_value = [np.array([1, 2, 3]) for _ in range(100)]
 
     return st
+
+
+def test_embed_with_sent_tx_single_process(
+    mock_sentence_transformer: MagicMock,
+) -> None:
+    # Arrange
+    texts = ["text" for _ in range(100)]
+
+    # Act
+    res = list(
+        embed_with_sent_tx(
+            text=texts, sent_tx=mock_sentence_transformer, use_multi=False
+        )
+    )
+
+    # Assert
+    assert len(res) == 100
+    for text, emb in res:
+        assert text == "text"
+        np.testing.assert_array_equal(emb, np.array([1, 2, 3]))
 
 
 def test_embed_with_sent_tx_single_batch(mock_sentence_transformer: MagicMock) -> None:
@@ -148,7 +169,11 @@ def test_embed_with_sent_tx_single_batch(mock_sentence_transformer: MagicMock) -
     texts = ["text" for _ in range(100)]
 
     # Act
-    res = list(embed_with_sent_tx(text=texts, sent_tx=mock_sentence_transformer))
+    res = list(
+        embed_with_sent_tx(
+            text=texts, sent_tx=mock_sentence_transformer, use_multi=True
+        )
+    )
 
     # Assert
     assert len(res) == 100
@@ -164,7 +189,11 @@ def test_embed_with_sent_tx_multiple_batches(
     texts = ["text" for _ in range(600)]  # More than one batch
 
     # Act
-    emb = list(embed_with_sent_tx(text=texts, sent_tx=mock_sentence_transformer))
+    emb = list(
+        embed_with_sent_tx(
+            text=texts, sent_tx=mock_sentence_transformer, use_multi=True
+        )
+    )
 
     # Assert
     assert len(emb) == 600
