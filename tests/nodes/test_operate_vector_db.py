@@ -5,10 +5,9 @@ import pytest
 from pydantic_core import Url
 
 from kronos.nodes.operate_vector_db import (
-    CollectionName,
+    NameToSchema,
     VectorDBEndPoint,
     add_collections,
-    get_collections_schema,
     instantiate_client,
 )
 
@@ -32,15 +31,6 @@ def test_instantiate_client_custom_endpoint(mock_weaviate_client: Mock) -> None:
 
     mock_weaviate_client.assert_called_once_with(connection_params=ANY)
 
-
-def test_get_collections_schema() -> None:
-    schema = get_collections_schema()
-
-    assert len(schema) == 2
-    assert schema[0].name == CollectionName.word
-    assert schema[1].name == CollectionName.sent
-
-
 @patch("kronos.nodes.operate_vector_db.instantiate_client")
 def test_add_collections(
     mock_instantiate_client: Mock, mock_weaviate_client: Mock
@@ -48,7 +38,7 @@ def test_add_collections(
     mock_client = mock_instantiate_client.return_value.__enter__.return_value
     mock_client.collections.list_all.return_value = []
 
-    add_collections(get_collections_schema())
+    add_collections(list(NameToSchema.values()))
 
     assert mock_client.collections.create.call_count == 2
     mock_client.collections.list_all.assert_called_once()

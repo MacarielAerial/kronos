@@ -1,6 +1,7 @@
 import logging
 from enum import Enum
-from typing import List, Optional
+from pprint import pformat
+from typing import Dict, List, Optional
 
 import numpy as np
 from pydantic import BaseModel, HttpUrl
@@ -10,6 +11,16 @@ from weaviate.classes.config import DataType, Property
 from weaviate.connect import ConnectionParams
 
 logger = logging.getLogger(__name__)
+
+# TODO: Refactor to centralise logging configuration in a file
+httpx_logger = logging.getLogger("httpx")
+httpx_logger.setLevel(logging.WARNING)
+httpx_logger = logging.getLogger("httpcore")
+httpx_logger.setLevel(logging.WARNING)
+httpx_logger = logging.getLogger("grpc")
+httpx_logger.setLevel(logging.WARNING)
+httpx_logger = logging.getLogger("asyncio")
+httpx_logger.setLevel(logging.WARNING)
 
 
 class VectorDBEndPoint(BaseModel):
@@ -54,8 +65,7 @@ class CollectionSchema(BaseModel):
     description: str
     properties: List[PropertySchema]
 
-
-def get_collections_schema() -> List[CollectionSchema]:
+def get_word_collection_schema() -> CollectionSchema:
     word_collection = CollectionSchema(
         name=CollectionName.word,
         description="Text which is encoded with its average word vector",
@@ -68,6 +78,9 @@ def get_collections_schema() -> List[CollectionSchema]:
         ],
     )
 
+    return word_collection
+
+def get_sent_collection_schema() -> CollectionSchema:
     sent_collection = CollectionSchema(
         name=CollectionName.sent,
         description="Text which is encoded with its sentence transformer embedding",
@@ -80,7 +93,13 @@ def get_collections_schema() -> List[CollectionSchema]:
         ],
     )
 
-    return [word_collection, sent_collection]
+    return sent_collection
+
+
+NameToSchema: Dict[CollectionName, CollectionSchema] = {
+    CollectionName.word: get_word_collection_schema(),
+    CollectionName.sent: get_sent_collection_schema()
+}
 
 
 #
@@ -109,7 +128,7 @@ def add_collections(
                 ],
             )
 
-        logger.info(f"Added schema for {len(collections_schema)} collections")
+            logger.info(f"Added schema for collection {schema.name.value}")
 
 
 # TODO: Add a test for this function once the dev understands how batch.dynamic() works
@@ -130,9 +149,30 @@ def batch_import(
     with instantiate_client(end_point=end_point) as client:
         with client.batch.dynamic() as batch:
             for single_text, single_emb in zip(text, emb):
-                uuid = batch.add_object(
+                _ = batch.add_object(
                     collection=collection_name.value,
-                    properties=Property(name=single_text, data_type=DataType.TEXT),
+                    properties={"name": single_text, "data_type": DataType.TEXT},
                     vector=single_emb,
                 )
-                logger.debug(f"Added object with uuid {uuid}")
+        
+            dict_n_imported = client.collections.get(collection_name.value).aggregate.over_all(total_count=True)
+        logger.info(f"After import {dict_n_imported.total_count} objects exist "
+                    f"in collection {collection_name.value}")
+
+
+def collection_exists(collection_name: CollectionName, end_point: Optional[VectorDBEndPoint] = None) -> bool:
+    with instantiate_client(end_point=end_point) as client:
+        if len(client.collections.list_all()) < 1:
+            logger.info("No collection exists in this vector database")
+            return False
+        elif len(client.collections.get(collection_name.value)) < 1:
+            logger.info(f"Collection named {collection_name.value} does not exist")
+            return False
+        
+        return True
+
+def del_collection(collection_name: CollectionName, end_point: Optional[VectorDBEndPoint] = None) -> None:
+    with instantiate_client(end_point=end_point) as client:
+        client.collections.delete(name=collection_name.value)
+
+        logger.info(f"Deleted collection {collection_name.value}")
