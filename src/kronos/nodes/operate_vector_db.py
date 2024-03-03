@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import BaseModel, HttpUrl
 from pydantic_core import Url
 from weaviate import WeaviateClient
+from weaviate.util import generate_uuid5
 from weaviate.classes.config import DataType, Property
 from weaviate.connect import ConnectionParams
 
@@ -148,14 +149,14 @@ def batch_import(
 
     with instantiate_client(end_point=end_point) as client:
         with client.batch.dynamic() as batch:
-            for single_text, single_emb in zip(text, emb):
+            for i in range(len(text)):
                 _ = batch.add_object(
                     collection=collection_name.value,
-                    properties={"name": single_text, "data_type": DataType.TEXT},
-                    vector=single_emb,
+                    properties={"name": text[i], "data_type": DataType.TEXT},
+                    vector=emb[i],
                 )
-        
-            dict_n_imported = client.collections.get(collection_name.value).aggregate.over_all(total_count=True)
+    
+        dict_n_imported = client.collections.get(collection_name.value).aggregate.over_all(total_count=True)
         logger.info(f"After import {dict_n_imported.total_count} objects exist "
                     f"in collection {collection_name.value}")
 
