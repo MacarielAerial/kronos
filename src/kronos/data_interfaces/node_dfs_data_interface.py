@@ -36,6 +36,13 @@ class NodeType(str, Enum):
     ent_label = "EntLabel"
 
 
+# Sentence Transformer Embedded Node Types
+TX_NTYPES: Tuple[NodeType, ...] = (NodeType.sheet_cell,)
+
+# Average Word Vector Embedded Node Types
+WV_NTYPES: Tuple[NodeType, ...] = (NodeType.token, NodeType.ent, NodeType.ent_label)
+
+
 # Layout
 SheetCellTuple = namedtuple(
     "SheetCellTuple",
