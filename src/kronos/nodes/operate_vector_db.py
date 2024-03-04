@@ -1,13 +1,11 @@
 import logging
 from enum import Enum
-from pprint import pformat
 from typing import Dict, List, Optional
 
 import numpy as np
 from pydantic import BaseModel, HttpUrl
 from pydantic_core import Url
 from weaviate import WeaviateClient
-from weaviate.util import generate_uuid5
 from weaviate.classes.config import DataType, Property
 from weaviate.connect import ConnectionParams
 
@@ -66,6 +64,7 @@ class CollectionSchema(BaseModel):
     description: str
     properties: List[PropertySchema]
 
+
 def get_word_collection_schema() -> CollectionSchema:
     word_collection = CollectionSchema(
         name=CollectionName.word,
@@ -80,6 +79,7 @@ def get_word_collection_schema() -> CollectionSchema:
     )
 
     return word_collection
+
 
 def get_sent_collection_schema() -> CollectionSchema:
     sent_collection = CollectionSchema(
@@ -99,7 +99,7 @@ def get_sent_collection_schema() -> CollectionSchema:
 
 NameToSchema: Dict[CollectionName, CollectionSchema] = {
     CollectionName.word: get_word_collection_schema(),
-    CollectionName.sent: get_sent_collection_schema()
+    CollectionName.sent: get_sent_collection_schema(),
 }
 
 
@@ -155,13 +155,19 @@ def batch_import(
                     properties={"name": text[i], "data_type": DataType.TEXT},
                     vector=emb[i],
                 )
-    
-        dict_n_imported = client.collections.get(collection_name.value).aggregate.over_all(total_count=True)
-        logger.info(f"After import {dict_n_imported.total_count} objects exist "
-                    f"in collection {collection_name.value}")
+
+        dict_n_imported = client.collections.get(
+            collection_name.value
+        ).aggregate.over_all(total_count=True)
+        logger.info(
+            f"After import {dict_n_imported.total_count} objects exist "
+            f"in collection {collection_name.value}"
+        )
 
 
-def collection_exists(collection_name: CollectionName, end_point: Optional[VectorDBEndPoint] = None) -> bool:
+def collection_exists(
+    collection_name: CollectionName, end_point: Optional[VectorDBEndPoint] = None
+) -> bool:
     with instantiate_client(end_point=end_point) as client:
         if len(client.collections.list_all()) < 1:
             logger.info("No collection exists in this vector database")
@@ -169,10 +175,13 @@ def collection_exists(collection_name: CollectionName, end_point: Optional[Vecto
         elif len(client.collections.get(collection_name.value)) < 1:
             logger.info(f"Collection named {collection_name.value} does not exist")
             return False
-        
+
         return True
 
-def del_collection(collection_name: CollectionName, end_point: Optional[VectorDBEndPoint] = None) -> None:
+
+def del_collection(
+    collection_name: CollectionName, end_point: Optional[VectorDBEndPoint] = None
+) -> None:
     with instantiate_client(end_point=end_point) as client:
         client.collections.delete(name=collection_name.value)
 

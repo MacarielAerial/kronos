@@ -31,6 +31,7 @@ def test_instantiate_client_custom_endpoint(mock_weaviate_client: Mock) -> None:
 
     mock_weaviate_client.assert_called_once_with(connection_params=ANY)
 
+
 @patch("kronos.nodes.operate_vector_db.instantiate_client")
 def test_add_collections(
     mock_instantiate_client: Mock, mock_weaviate_client: Mock
