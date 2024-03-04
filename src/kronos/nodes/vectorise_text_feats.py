@@ -71,6 +71,12 @@ def _vectorise_with_word_vector(
             node_df for node_df in node_dfs.members if node_df.ntype in WV_NTYPES
         ]
     )
+
+    logger.info(
+        f"{len(text)} unique strings are identified from nodes of "
+        f"following node types: {WV_NTYPES}"
+    )
+
     return embed_with_avg_word_vec(text=text, spacy_pipeline=spacy_pipeline)
 
 
@@ -146,4 +152,10 @@ def _vectorise_with_sentence_transformer(  # type: ignore[no-any-unimported]
             node_df for node_df in node_dfs.members if node_df.ntype in TX_NTYPES
         ]
     )
+
+    logger.info(
+        f"{len(text)} unique strings are identified from nodes of "
+        f"following node types: {TX_NTYPES}"
+    )
+
     return embed_with_sent_tx(text=text, sent_tx=sentence_transformer)

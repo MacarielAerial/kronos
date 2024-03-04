@@ -55,8 +55,20 @@ Kronos is an application which aims to build the backend for an organisation int
     poetry run python -m kronos.pipelines.vectorise_with_word_vector_local -psnd data/02_intermediate/semantics_node_dfs.json -psp local_dependencies/model-best/ -pte data/04_feature/word_vec_emb.npz
     ```
 
-9. Vectorise text features of certain types of nodes with sentence transformer embeddings
+9. Upload average word vector embedding to a database
+
+    ```sh
+    poetry run python -m kronos.pipelines.emb_to_db -pte data/04_feature/word_vec_emb.npz -cn Word
+    ```
+
+10. Vectorise text features of certain types of nodes with sentence transformer embeddings
 
     ```sh
     poetry run python -m kronos.pipelines.vectorise_with_sent_tx_local -psnd data/02_intermediate/semantics_node_dfs.json -pst local_dependencies/all-MiniLM-L6-v2/ -pte data/04_feature/sent_tx_emb.npz
+    ```
+
+11. Upload sentence transformer embedding to a database
+
+    ```sh
+    poetry run python -m kronos.pipelines.emb_to_db -pte data/04_feature/sent_tx_emb.npz -cn Sentence
     ```

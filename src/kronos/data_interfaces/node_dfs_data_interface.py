@@ -37,7 +37,7 @@ class NodeType(str, Enum):
 
 
 # Sentence Transformer Embedded Node Types
-TX_NTYPES: Tuple[NodeType, ...] = (NodeType.token, NodeType.ent, NodeType.ent_label)
+TX_NTYPES: Tuple[NodeType, ...] = (NodeType.sheet_cell,)
 
 # Average Word Vector Embedded Node Types
 WV_NTYPES: Tuple[NodeType, ...] = (NodeType.token, NodeType.ent, NodeType.ent_label)

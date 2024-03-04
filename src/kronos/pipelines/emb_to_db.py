@@ -13,6 +13,7 @@ from kronos.nodes.operate_vector_db import (
     batch_import,
     collection_exists,
     del_collection,
+    instantiate_client,
 )
 
 
@@ -23,17 +24,17 @@ def emb_to_db(
     text_emb_local_data_interface = TextEmbLocalDataInterface(filepath=path_text_emb)
     text, emb = text_emb_local_data_interface.load()
 
-    if collection_exists(collection_name=collection_name, end_point=end_point):
-        del_collection(collection_name=collection_name, end_point=end_point)
-
-    add_collections(
-        collections_schema=[NameToSchema[collection_name]], end_point=end_point
-    )
-
     # Task Processing
-    batch_import(
-        collection_name=collection_name, text=text, emb=emb, end_point=end_point
-    )
+    with instantiate_client(end_point=end_point) as client:
+        if collection_exists(client=client, collection_name=collection_name):
+            del_collection(client=client, collection_name=collection_name)
+
+        add_collections(
+            client=client, collections_schema=[NameToSchema[collection_name]]
+        )
+
+        # Task Processing
+        batch_import(client=client, collection_name=collection_name, text=text, emb=emb)
 
 
 if __name__ == "__main__":
